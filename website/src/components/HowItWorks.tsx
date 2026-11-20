@@ -1,9 +1,9 @@
 import { DownloadIcon, PhoneIcon, ScreenIcon } from "./Icons";
 
 const STEPS = [
-  { n: "01", icon: <DownloadIcon />, title: "Baixe o Refletunes", text: "Instale o aplicativo no seu computador." },
-  { n: "02", icon: <PhoneIcon />, title: "Conecte seu smartphone", text: "Prepare seu dispositivo para a conexão com o computador." },
-  { n: "03", icon: <ScreenIcon />, title: "Espelhe sua tela", text: "Visualize e controle a tela do smartphone diretamente no computador, conforme os recursos disponíveis no aplicativo." },
+  { n: "01", icon: <DownloadIcon />, title: "Baixe o Refletunes", text: "Extraia o arquivo baixado e abra o Refletunes no seu computador." },
+  { n: "02", icon: <PhoneIcon />, title: "Conecte seu Android", text: "Cabo USB ou Wi-Fi. O app orienta a ativação da depuração no celular." },
+  { n: "03", icon: <ScreenIcon />, title: "Espelhe sua tela", text: "Visualize e controle a tela do celular com mouse e teclado do computador." },
 ];
 
 export default function HowItWorks() {

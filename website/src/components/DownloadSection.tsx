@@ -41,6 +41,8 @@ export default function DownloadSection() {
         <h2 id="download-title" className="section__title">Baixe o Refletunes</h2>
         <p className="section__lead">
           Selecione seu sistema operacional para baixar a versão compatível com seu computador.
+          O Refletunes espelha celulares Android e é instalado no computador — se você está
+          acessando pelo celular, abra este site no PC ou Mac.
         </p>
 
         {detected && (
@@ -84,6 +86,11 @@ export default function DownloadSection() {
                 <DownloadIcon />
                 Baixar para {current.name}
               </button>
+              {canDownload && (
+                <p className="download__note">
+                  Versão beta 0.1.0 · arquivo .zip portátil — extraia e execute o Refletunes.
+                </p>
+              )}
               {!canDownload && <p className="download__note">Esta versão ainda não está disponível.</p>}
             </>
           )}
