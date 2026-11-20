@@ -11,6 +11,7 @@ Não é afiliado, patrocinado ou endossado pela Genymobile. Veja
 ```
 upstream/             scrcpy v5.0.1 (submodule)
 desktop/launcher/     launcher Go + Fyne (refletunes.exe)
+website/              site oficial (React + Vite + TS)
 docs/                 documentação e decisões de arquitetura
 legal/                licenças e avisos de terceiros
 .github/workflows/    build Windows automatizado

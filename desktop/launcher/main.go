@@ -32,8 +32,15 @@ func main() {
 	body := container.NewAppTabs(
 		container.NewTabItem("Configurar", ui.buildSetup()),
 		container.NewTabItem("Dispositivos", ui.buildDevices()),
+		container.NewTabItem("Ajuda", ui.buildHelp()),
 	)
 	body.SetTabLocation(container.TabLocationLeading)
+	body.OnSelected = func(t *container.TabItem) {
+		// auto-refresh só na aba Dispositivos
+		ui.autoRefresh = t.Text == "Dispositivos"
+	}
+	// aba inicial é "Configurar"; o polling liga ao entrar em "Dispositivos"
+	go ui.pollDevices()
 
 	header := ui.buildHeader()
 	w.SetContent(container.NewBorder(header, nil, nil, nil, body))
@@ -55,6 +62,8 @@ type launcherUI struct {
 	selectedIdx  int
 	mirrorBtn    *widget.Button
 	deviceChecks []*widget.Check
+	autoRefresh  bool
+	polling      bool
 }
 
 // ---------- Cabeçalho ----------
@@ -146,6 +155,7 @@ func (u *launcherUI) detectADB(showDialog bool) {
 	if err != nil {
 		u.adbPath = ""
 		u.setADBState(false, "componente ADB ausente")
+		logf("ERRO: adb nao encontrado: %v", err)
 		if showDialog {
 			dialog.ShowError(fmt.Errorf(
 				"O componente adb não foi encontrado.\n\n"+
@@ -156,6 +166,7 @@ func (u *launcherUI) detectADB(showDialog bool) {
 	}
 	u.adbPath = path
 	u.setADBState(true, "ADB pronto")
+	logf("ADB localizado em %s", path)
 	u.refreshDevices()
 }
 
@@ -288,12 +299,31 @@ func statusChip(d Device) fyne.CanvasObject {
 }
 
 func (u *launcherUI) refreshDevices() {
-	u.statusLabel.SetText("Verificando dispositivos...")
+	u.refreshDevicesQuiet(false)
+}
+
+// pollDevices atualiza a lista em segundo plano enquanto a aba está visível.
+func (u *launcherUI) pollDevices() {
+	for range time.Tick(3 * time.Second) {
+		if u.autoRefresh && u.adbPath != "" && !u.polling {
+			u.refreshDevicesQuiet(true)
+		}
+	}
+}
+
+func (u *launcherUI) refreshDevicesQuiet(silent bool) {
+	u.polling = true
+	if !silent {
+		u.statusLabel.SetText("Verificando dispositivos...")
+	}
 	go func() {
 		devices, err := ListDevices(u.adbPath)
 		fyne.Do(func() {
+			u.polling = false
 			if err != nil {
-				u.statusLabel.SetText("Erro: " + err.Error())
+				if !silent {
+					u.statusLabel.SetText("Erro: " + err.Error())
+				}
 				return
 			}
 			u.devices = devices
@@ -355,11 +385,56 @@ func (u *launcherUI) startMirror() {
 	}
 	d := u.devices[u.selectedIdx]
 	StartMirror(scrcpyPath, d, profile)
+	logf("espelhamento iniciado: %s perfil=%s", d.Serial, profile.Name)
 	u.statusLabel.SetText("Espelhamento iniciado — " + deviceTitle(d))
 	go func() {
 		time.Sleep(2 * time.Second)
 		fyne.Do(u.refreshDevices)
 	}()
+}
+
+// ---------- Aba Ajuda ----------
+
+func (u *launcherUI) buildHelp() fyne.CanvasObject {
+	faq := widget.NewAccordion(
+		widget.NewAccordionItem("O celular não aparece na lista",
+			widget.NewLabel("Confira: depuração USB ativada, cabo com dados (não só carga), e o aviso de autorização aceito na tela do celular. Depois toque em \"Verificar\".")),
+		widget.NewAccordionItem("Aparece \"aguardando autorização\"",
+			widget.NewLabel("Desbloqueie o celular e procure o aviso \"Permitir depuração USB?\". Marque \"Sempre permitir\" e toque em Permitir.")),
+		widget.NewAccordionItem("Espelha mas o mouse não funciona (Xiaomi/POCO)",
+			widget.NewLabel("Ative \"Depuração USB (configurações de segurança)\" nas Opções do desenvolvedor e reinicie o celular. Exige conta Mi e chip SIM.")),
+		widget.NewAccordionItem("Dispositivo ficou offline",
+			widget.NewLabel("Reconecte o cabo. Se persistir, feche o app, reconecte e verifique novamente.")),
+		widget.NewAccordionItem("Pareamento Wi-Fi falhou",
+			widget.NewLabel("O código expira em segundos: gere um novo em \"Parear dispositivo com código\". Confirme que celular e PC estão na mesma rede Wi-Fi.")),
+	)
+	for _, item := range faq.Items {
+		if lbl, ok := item.Detail.(*widget.Label); ok {
+			lbl.Wrapping = fyne.TextWrapWord
+		}
+	}
+
+	logTitle := widget.NewLabelWithStyle("Registro de diagnóstico", fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
+	logView := widget.NewLabel(readLogTail(15))
+	logView.TextStyle = fyne.TextStyle{Monospace: true}
+	logBg := canvas.NewRectangle(colCard)
+	logBg.CornerRadius = 10
+	logCard := container.NewStack(logBg, container.NewPadded(logView))
+
+	copyBtn := widget.NewButtonWithIcon("Copiar registro", theme.ContentCopyIcon(), func() {
+		u.win.Clipboard().SetContent(readLogTail(50))
+	})
+	refreshLogBtn := widget.NewButton("Atualizar", func() {
+		logView.SetText(readLogTail(15))
+	})
+
+	return container.NewScroll(container.NewPadded(container.NewVBox(
+		widget.NewLabelWithStyle("Problemas comuns", fyne.TextAlignLeading, fyne.TextStyle{Bold: true}),
+		faq,
+		widget.NewSeparator(),
+		logTitle, logCard,
+		container.NewHBox(copyBtn, refreshLogBtn),
+	)))
 }
 
 // ---------- Pareamento Wi-Fi ----------
@@ -390,6 +465,7 @@ func (u *launcherUI) showPairDialog() {
 			u.statusLabel.SetText("Pareando...")
 			go func() {
 				out, err := Pair(u.adbPath, strings.TrimSpace(addr.Text), strings.TrimSpace(code.Text))
+				logf("pareamento %s: %s err=%v", addr.Text, strings.TrimSpace(out), err)
 				fyne.Do(func() {
 					if err != nil {
 						u.statusLabel.SetText("Falha no pareamento: " + strings.TrimSpace(out))
@@ -412,6 +488,7 @@ func (u *launcherUI) askConnectAddress() {
 				return
 			}
 			out, err := Connect(u.adbPath, strings.TrimSpace(addr.Text))
+			logf("conexao wifi %s: %s err=%v", addr.Text, strings.TrimSpace(out), err)
 			if err != nil {
 				u.statusLabel.SetText("Falha: " + strings.TrimSpace(out))
 			} else {
