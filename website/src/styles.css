@@ -207,3 +207,18 @@ p, li { text-wrap: pretty; }
 }
 @media (max-width: 700px) { .demo__glass { display: none; } }
 @media (prefers-reduced-motion: reduce) { .demo__glass { display: none; } }
+
+/* Fallback estático dentro de #root para SEO/no-JS (React substitui na montagem) */
+#seo-fallback {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px 20px;
+  color: var(--text);
+  font-family: inherit;
+  line-height: 1.6;
+}
+#seo-fallback h1 { font-size: 1.9rem; margin-bottom: 16px; }
+#seo-fallback h2 { font-size: 1.3rem; margin: 32px 0 8px; }
+#seo-fallback a { color: #6e9bff; }
+#seo-fallback ol { padding-left: 20px; }
+#seo-fallback li { margin-bottom: 10px; }
