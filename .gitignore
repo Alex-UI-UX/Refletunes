@@ -1,0 +1,23 @@
+# Artefatos de desenvolvimento local (o CI gera os binários)
+scrcpy-macos.tar.gz
+scrcpy-macos-*/
+desktop/launcher/launcher
+desktop/launcher/launcher.exe
+desktop/launcher/scrcpy
+desktop/launcher/scrcpy.exe
+desktop/launcher/scrcpy-server
+desktop/launcher/adb
+desktop/launcher/adb.exe
+desktop/launcher/*.dll
+desktop/launcher/*.png
+
+# Builds
+dist/
+release/work/
+release/output/
+
+# Go
+desktop/launcher/vendor/
+
+# Sistema
+.DS_Store

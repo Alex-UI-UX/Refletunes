@@ -1,0 +1,84 @@
+name: Build Windows
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+env:
+  UPSTREAM_VERSION: v5.0.1
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (com submodule upstream)
+        uses: actions/checkout@v6
+        with:
+          submodules: true
+          fetch-depth: 0  # tags completas: upstream usa `git describe` para versionar
+
+      - name: Instalar toolchain de build
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mingw-w64 mingw-w64-tools libz-mingw-w64-dev \
+            meson ninja-build pkg-config unzip zip
+
+      - name: Setup JDK 17 (scrcpy-server)
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Go (launcher)
+        uses: actions/setup-go@v6
+        with:
+          go-version: 'stable'
+          cache-dependency-path: desktop/launcher/go.sum
+
+      - name: Fixar versão upstream
+        run: git -C upstream checkout $UPSTREAM_VERSION
+
+      - name: Build scrcpy-server
+        run: cd upstream && GRADLE=gradle release/build_server.sh
+
+      - name: Build client Windows (win64, cross-compile)
+        run: cd upstream && release/build_windows.sh 64
+
+      - name: Build launcher (refletunes.exe)
+        working-directory: desktop/launcher
+        env:
+          GOOS: windows
+          GOARCH: amd64
+          CGO_ENABLED: 1
+          CC: x86_64-w64-mingw32-gcc
+          CXX: x86_64-w64-mingw32-g++
+        run: go build -ldflags "-s -w" -o refletunes.exe .
+
+      - name: Montar pacote
+        run: |
+          PKG=dist/refletunes-win64
+          mkdir -p "$PKG"
+          cp upstream/release/work/build-win64/dist/* "$PKG/"
+          cp upstream/release/work/build-server/server/scrcpy-server "$PKG/"
+          cp desktop/launcher/refletunes.exe "$PKG/"
+          cp upstream/LICENSE "$PKG/LICENSE-scrcpy.txt"
+          cp legal/THIRD_PARTY_NOTICES.md "$PKG/"
+
+      - name: ZIP + SHA-256
+        run: |
+          cd dist
+          zip -r refletunes-win64.zip refletunes-win64
+          sha256sum refletunes-win64.zip > refletunes-win64.zip.sha256
+          cat refletunes-win64.zip.sha256
+
+      - name: Upload artefato
+        uses: actions/upload-artifact@v7
+        with:
+          name: refletunes-win64
+          path: |
+            dist/refletunes-win64.zip
+            dist/refletunes-win64.zip.sha256
