@@ -182,3 +182,7 @@ ol { padding: 0; list-style: none; }
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
   .link__dot { opacity: 1; left: 50%; }
 }
+
+/* Plataforma futura (ex.: iOS) */
+.pcard.is-soon { opacity: .55; cursor: default; }
+.pcard.is-soon:hover { border-color: var(--border); transform: none; }
