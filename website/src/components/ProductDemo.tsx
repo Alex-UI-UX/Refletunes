@@ -1,3 +1,5 @@
+import FluidGlass from "./FluidGlass.jsx";
+
 /** Tela genérica de smartphone (apps fictícios sem marca), usada no celular e espelhada no monitor. */
 function PhoneScreen() {
   const tiles = [
@@ -55,6 +57,23 @@ export default function ProductDemo() {
         <div className="phone__island" />
         <PhoneScreen />
       </div>
+
+      <FluidGlass
+        text=""
+        shape="lens"
+        size={190}
+        interaction="follow"
+        refraction={1}
+        dispersion={0.25}
+        reflection={0.8}
+        shadow={0.5}
+        tint={0.15}
+        color="#bcd6ff"
+        smoothness={0.6}
+        morphOnClick={false}
+        idle={false}
+        className="demo__glass"
+      />
     </div>
   );
 }

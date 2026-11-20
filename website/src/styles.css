@@ -187,3 +187,23 @@ p, li { text-wrap: pretty; }
   .link__dot { opacity: 1; left: 50%; }
 }
 
+
+/* GlassSurface envolvendo o CTA de download */
+.download__glass { animation: rise 0.3s var(--ease); }
+.btn--bare { height: 52px; padding: 0 26px; border-radius: 10px; }
+
+/* GlassIcons dentro dos passos */
+.step__icon.glass-icons { margin: 0; display: inline-flex; max-width: 44px; }
+.step__icon.glass-icons .glass-icon { pointer-events: none; }
+.step__icon.glass-icons .glass-icon-glyph svg { width: 100%; height: 100%; }
+
+/* FluidGlass: lente flutuante sobre o mockup do hero */
+.demo { position: relative; }
+.demo__glass {
+  position: absolute;
+  inset: -40px;
+  z-index: 5;
+  pointer-events: none;
+}
+@media (max-width: 700px) { .demo__glass { display: none; } }
+@media (prefers-reduced-motion: reduce) { .demo__glass { display: none; } }

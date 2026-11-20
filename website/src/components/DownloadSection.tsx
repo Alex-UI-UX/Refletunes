@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { PLATFORMS, type Platform } from "../config";
 import { detectPlatform } from "../detectPlatform";
 import PlatformCard from "./PlatformCard";
+import GlassSurface from "./GlassSurface.jsx";
 import { AppleIcon, WindowsIcon, DownloadIcon } from "./Icons";
 
 const ICONS: Record<Platform, ReactNode> = {
@@ -77,15 +78,24 @@ export default function DownloadSection() {
         <div className="download__action" aria-live="polite">
           {current && (
             <>
-              <button
-                type="button"
-                className="btn btn--primary btn--lg"
-                disabled={!canDownload}
-                onClick={handleDownload}
+              <GlassSurface
+                width="auto"
+                height={52}
+                borderRadius={12}
+                backgroundOpacity={0.08}
+                distortionScale={-140}
+                className="download__glass"
               >
-                <DownloadIcon />
-                Baixar para {current.name}
-              </button>
+                <button
+                  type="button"
+                  className="btn btn--primary btn--lg btn--bare"
+                  disabled={!canDownload}
+                  onClick={handleDownload}
+                >
+                  <DownloadIcon />
+                  Baixar para {current.name}
+                </button>
+              </GlassSurface>
               {canDownload && (
                 <p className="download__note">
                   Versão beta 0.1.0 · arquivo .zip portátil — extraia e execute o Refletunes.
