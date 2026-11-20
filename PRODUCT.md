@@ -62,6 +62,10 @@ em Xiaomi/MIUI).
   espaço para blocos de anúncio discretos, sem prejudicar a página atual.
 - Tom: confiança e simplicidade; copy em pt-BR direto, sem jargão técnico e sem
   promessas exageradas ("sem complicação" só onde o produto entrega).
+- Não divulgar "open source" nem linkar o GitHub no site — o repo é público
+  (requisito dos downloads por release), mas a marca não se anuncia como
+  projeto de código aberto. Licenças e créditos continuam na documentação
+  legal, como exige a Apache 2.0.
 
 ## Evidence on Hand
 

@@ -8,7 +8,7 @@ export const DOWNLOAD_WINDOWS_URL =
   "https://github.com/Alex-UI-UX/Refletunes/releases/download/v0.1.0-beta/refletunes-win64.zip";
 
 /** Deixe vazio para ocultar os links do GitHub. */
-export const GITHUB_URL = "https://github.com/Alex-UI-UX/Refletunes";
+export const GITHUB_URL = "";
 
 export type Platform = "macos" | "windows";
 

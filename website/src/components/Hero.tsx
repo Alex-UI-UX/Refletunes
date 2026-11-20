@@ -13,7 +13,7 @@ export default function Hero() {
             <a href="#download" className="btn btn--primary">Baixar Refletunes</a>
             <a href="#como-funciona" className="btn btn--ghost">Como funciona</a>
           </div>
-          <p className="hero__meta">Para celulares Android · Gratuito e de código aberto</p>
+          <p className="hero__meta">Para celulares Android · Gratuito</p>
         </div>
         <ProductDemo />
       </div>
