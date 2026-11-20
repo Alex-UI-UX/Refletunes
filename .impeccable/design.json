@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-20T00:00:00Z",
+  "title": "Design System: Refletunes",
+  "extensions": {
+    "colorMeta": {
+      "bg-abyss":     { "role": "neutral",  "displayName": "Abismo",         "canonical": "#080b14" },
+      "bg-surface":   { "role": "neutral",  "displayName": "Superfície",     "canonical": "#101522" },
+      "accent-solid": { "role": "primary",  "displayName": "Azul Ação",      "canonical": "#2d5de6", "tonalRamp": ["#2d5de6", "#4a79ff"] },
+      "accent-blue":  { "role": "primary",  "displayName": "Azul Marca",     "canonical": "#386bff" },
+      "accent-purple":{ "role": "tertiary", "displayName": "Roxo Marca",     "canonical": "#a12bff" },
+      "accent-cyan":  { "role": "tertiary", "displayName": "Ciano Sinal",    "canonical": "#00c8e8" },
+      "tag-suggested":{ "role": "tertiary", "displayName": "Azul Sugestão",  "canonical": "#8ea5ff" },
+      "text-primary": { "role": "neutral",  "displayName": "Texto",          "canonical": "#ffffff" },
+      "text-muted":   { "role": "neutral",  "displayName": "Mutado",         "canonical": "#9299aa" },
+      "text-faint":   { "role": "neutral",  "displayName": "Fraco (piso AA)","canonical": "#7d8496" },
+      "border-hairline":{ "role": "neutral","displayName": "Hairline",       "canonical": "#242b3a" }
+    },
+    "typographyMeta": {
+      "display":  { "displayName": "Display",  "purpose": "Título do hero, único por página." },
+      "headline": { "displayName": "Headline", "purpose": "Títulos de seção." },
+      "title":    { "displayName": "Title",    "purpose": "Nomes de plataforma e passos." },
+      "body":     { "displayName": "Body",     "purpose": "Textos de apoio; text-wrap: pretty." },
+      "label":    { "displayName": "Label",    "purpose": "Botões, tags, meta-informação." }
+    },
+    "shadows": [
+      { "name": "cta", "value": "0 1px 0 rgb(255 255 255 / .12) inset, 0 12px 28px -12px rgb(0 0 0 / .8)", "purpose": "Botão primário — sombra de contato." },
+      { "name": "selection-ring", "value": "0 0 0 4px rgb(56 107 255 / .12)", "purpose": "Anel do card selecionado — estado, não ornamento." },
+      { "name": "device", "value": "0 30px 60px -20px rgb(0 0 0 / .9)", "purpose": "Telefone no mockup — única flutuação permitida." }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "cubic-bezier(0.2, 0.7, 0.2, 1)", "purpose": "Easing padrão de transições de estado." },
+      { "name": "rise", "value": "rise 0.3s var(--ease)", "purpose": "Entrada do botão de download após seleção." },
+      { "name": "travel", "value": "travel 2.4s linear infinite", "purpose": "Dots de transmissão no mockup (única animação ambiente)." }
+    ],
+    "breakpoints": [
+      { "name": "tablet", "value": "920px" },
+      { "name": "mobile", "value": "600px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "CTA principal — azul sólido, um por viewport.",
+      "html": "<button class=\"ds-btn-primary\">Baixar Refletunes</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid transparent; border-radius: 8px; background: #2d5de6; color: #fff; font: inherit; font-size: 15px; font-weight: 550; cursor: pointer; box-shadow: 0 1px 0 rgb(255 255 255 / .12) inset, 0 12px 28px -12px rgb(0 0 0 / .8); transition: background-color .2s, transform .15s cubic-bezier(.2,.7,.2,1); } .ds-btn-primary:hover { background: #4a79ff; } .ds-btn-primary:active { transform: translateY(1px); } .ds-btn-primary:disabled { background: #101522; color: #9299aa; border-color: #242b3a; box-shadow: none; cursor: not-allowed; } .ds-btn-primary:focus-visible { outline: 2px solid #386bff; outline-offset: 3px; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Ação secundária — hairline que se preenche no hover.",
+      "html": "<button class=\"ds-btn-ghost\">Como funciona</button>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #242b3a; border-radius: 8px; background: transparent; color: #e6e8ee; font: inherit; font-size: 15px; font-weight: 550; cursor: pointer; transition: background-color .2s, border-color .2s; } .ds-btn-ghost:hover { background: #101522; border-color: #343d52; } .ds-btn-ghost:focus-visible { outline: 2px solid #386bff; outline-offset: 3px; }"
+    },
+    {
+      "name": "Platform Card",
+      "kind": "card",
+      "refersTo": "platform-card",
+      "description": "Card-radio de seleção de SO — componente assinatura.",
+      "html": "<button class=\"ds-pcard is-selected\" role=\"radio\" aria-checked=\"true\"><span class=\"ds-pcard-check\">✓</span><span class=\"ds-pcard-name\">Windows</span><span class=\"ds-pcard-desc\">Para computadores com Windows 10 e 11.</span><span class=\"ds-pcard-select\">Windows selecionado</span></button>",
+      "css": ".ds-pcard { position: relative; display: flex; flex-direction: column; align-items: flex-start; text-align: left; gap: 4px; padding: 24px; border-radius: 10px; border: 1px solid #242b3a; background: #080b14; color: #fff; font: inherit; cursor: pointer; transition: border-color .2s, transform .2s cubic-bezier(.2,.7,.2,1), box-shadow .25s; } .ds-pcard:hover { border-color: #3a4560; transform: translateY(-2px); } .ds-pcard.is-selected { border-color: transparent; background: linear-gradient(#080b14, #080b14) padding-box, linear-gradient(135deg, #a12bff, #386bff) border-box; box-shadow: 0 0 0 4px rgb(56 107 255 / .12); } .ds-pcard-check { position: absolute; top: 16px; right: 16px; width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(135deg, #a12bff, #386bff); display: grid; place-items: center; font-size: 12px; transform: scale(0); opacity: 0; transition: transform .25s cubic-bezier(.2,.7,.2,1), opacity .2s; } .ds-pcard.is-selected .ds-pcard-check { transform: scale(1); opacity: 1; } .ds-pcard-name { font-size: 20px; font-weight: 600; letter-spacing: -.02em; } .ds-pcard-desc { font-size: 15px; color: #9299aa; } .ds-pcard-select { margin-top: 18px; width: 100%; text-align: center; padding: 10px 14px; font-size: 14px; font-weight: 550; border: 1px solid #242b3a; border-radius: 8px; } .ds-pcard.is-selected .ds-pcard-select { background: rgb(56 107 255 / .14); border-color: rgb(56 107 255 / .5); color: #cfdcff; }"
+    },
+    {
+      "name": "Header Nav",
+      "kind": "nav",
+      "refersTo": "header",
+      "description": "Barra sticky de 56px com blur e hairline.",
+      "html": "<nav class=\"ds-header-nav\"><a href=\"#\" class=\"ds-hlink\">Como funciona</a><a href=\"#\" class=\"ds-hlink ds-hlink--cta\">Download</a></nav>",
+      "css": ".ds-header-nav { display: flex; align-items: center; gap: 4px; } .ds-hlink { padding: 6px 12px; border-radius: 6px; font-size: 14px; color: #9299aa; text-decoration: none; transition: color .2s, background-color .2s; } .ds-hlink:hover { color: #fff; background: #101522; } .ds-hlink--cta { color: #fff; border: 1px solid #242b3a; } .ds-hlink--cta:hover { border-color: #343d52; }"
+    },
+    {
+      "name": "Detection Banner",
+      "kind": "chip",
+      "refersTo": "detect",
+      "description": "Pill de detecção de SO — informa, nunca seleciona.",
+      "html": "<p class=\"ds-detect\"><span class=\"ds-detect-dot\"></span>Detectamos que você está usando macOS.</p>",
+      "css": ".ds-detect { display: inline-flex; align-items: center; gap: 10px; margin: 0; font-size: 14px; color: #c9cedb; padding: 6px 12px; border: 1px solid #242b3a; border-radius: 6px; background: #080b14; } .ds-detect-dot { width: 7px; height: 7px; border-radius: 50%; background: #00c8e8; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "O Espelho Nítido",
+    "overview": "Clareza e fidelidade acima de tudo: a página existe para levar a tela do celular ao computador sem ruído. Componentes de ornamento mínimo absoluto; tipografia e espaço carregam a hierarquia; a cor aparece só onde a ação acontece. Anti-referência: visual genérico de template/IA.",
+    "keyCharacteristics": [
+      "Fundo quase-preto azulado com uma única superfície elevada",
+      "Azul sólido como voz de ação; roxo e ciano apenas em micro-detalhes",
+      "Inter como única família, tracking apertado nos títulos",
+      "Bordas hairline, raios moderados, nada flutuando",
+      "Espaço negativo generoso — a página é curta de propósito"
+    ],
+    "rules": [
+      { "name": "The One Voice Rule", "body": "O azul sólido cobre no máximo um controle por viewport.", "section": "colors" },
+      { "name": "No Functional Glow", "body": "Sombras têm offset e blur reais; halos coloridos de offset zero são decoração e não entram.", "section": "colors" },
+      { "name": "The Quiet Label Rule", "body": "Nada de kicker/eyebrow acima de títulos.", "section": "typography" },
+      { "name": "Flat by Default", "body": "Superfícies repousam planas; elevação é resposta a estado.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do manter o CTA em azul sólido; um por viewport.",
+      "Do usar #7d8496 como piso de texto secundário (>=4.5:1).",
+      "Do reservar #a12bff e #00c8e8 para micro-acentos e o mockup.",
+      "Do manter copy em pt-BR direta, sem jargão na UI."
+    ],
+    "donts": [
+      "Don't aplicar o gradiente roxo→azul como fundo de botão ou texto.",
+      "Don't usar glow/halo colorido sem offset real.",
+      "Don't criar eyebrow/kicker, seção de métricas ou cards iguais como estrutura de página.",
+      "Don't prometer macOS ou iOS como se disponíveis.",
+      "Don't adicionar elementos flutuantes, emojis como ícones ou ilustrações abstratas."
+    ]
+  }
+}
