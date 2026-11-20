@@ -10,11 +10,11 @@ export const DOWNLOAD_WINDOWS_URL =
 /** Deixe vazio para ocultar os links do GitHub. */
 export const GITHUB_URL = "https://github.com/Alex-UI-UX/Refletunes";
 
-export type Platform = "macos" | "windows" | "ios";
+export type Platform = "macos" | "windows";
 
 export const PLATFORMS: Record<
   Platform,
-  { id: Platform; name: string; description: string; url: string; comingSoon?: boolean }
+  { id: Platform; name: string; description: string; url: string }
 > = {
   macos: {
     id: "macos",
@@ -27,12 +27,5 @@ export const PLATFORMS: Record<
     name: "Windows",
     description: "Para computadores com Windows 10 e 11.",
     url: DOWNLOAD_WINDOWS_URL,
-  },
-  ios: {
-    id: "ios",
-    name: "iOS",
-    description: "Para iPhone.",
-    url: "",
-    comingSoon: true,
   },
 };

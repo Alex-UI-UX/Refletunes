@@ -7,7 +7,6 @@ import { AppleIcon, WindowsIcon, DownloadIcon } from "./Icons";
 const ICONS: Record<Platform, ReactNode> = {
   macos: <AppleIcon />,
   windows: <WindowsIcon />,
-  ios: <AppleIcon />,
 };
 
 export default function DownloadSection() {
@@ -68,7 +67,6 @@ export default function DownloadSection() {
               selected={selected === id}
               detected={detected === id}
               available={PLATFORMS[id].url.trim() !== ""}
-              comingSoon={PLATFORMS[id].comingSoon}
               onSelect={setSelected}
             />
           ))}

@@ -183,6 +183,3 @@ ol { padding: 0; list-style: none; }
   .link__dot { opacity: 1; left: 50%; }
 }
 
-/* Plataforma futura (ex.: iOS) */
-.pcard.is-soon { opacity: .55; cursor: default; }
-.pcard.is-soon:hover { border-color: var(--border); transform: none; }
