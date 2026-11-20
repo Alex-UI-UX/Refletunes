@@ -1,0 +1,113 @@
+name: Build macOS
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+env:
+  UPSTREAM_VERSION: v5.0.1
+  UPSTREAM_ARTIFACT: scrcpy-macos-x86_64-v5.0.1
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go (launcher)
+        uses: actions/setup-go@v6
+        with:
+          go-version: 'stable'
+          cache-dependency-path: desktop/launcher/go.sum
+
+      - name: Baixar artefato oficial do scrcpy (macOS x86_64)
+        run: |
+          curl -fsSL -o "$UPSTREAM_ARTIFACT.tar.gz" \
+            "https://github.com/Genymobile/scrcpy/releases/download/$UPSTREAM_VERSION/$UPSTREAM_ARTIFACT.tar.gz"
+          tar xzf "$UPSTREAM_ARTIFACT.tar.gz"
+
+      - name: Build launcher (arm64)
+        working-directory: desktop/launcher
+        env:
+          GOOS: darwin
+          GOARCH: arm64
+          CGO_ENABLED: 1
+        run: go build -ldflags "-s -w" -o refletunes-arm64 .
+
+      - name: Build launcher (amd64)
+        working-directory: desktop/launcher
+        env:
+          GOOS: darwin
+          GOARCH: amd64
+          CGO_ENABLED: 1
+          CGO_CFLAGS: -arch x86_64
+          CGO_LDFLAGS: -arch x86_64
+        run: go build -ldflags "-s -w" -o refletunes-amd64 .
+
+      - name: Binário universal (lipo)
+        working-directory: desktop/launcher
+        run: |
+          lipo -create refletunes-arm64 refletunes-amd64 -output refletunes
+          lipo -info refletunes
+
+      - name: Montar Refletunes.app
+        run: |
+          APP="dist/refletunes-macos/Refletunes.app/Contents"
+          mkdir -p "$APP/MacOS" "$APP/Resources"
+          cp "$UPSTREAM_ARTIFACT"/scrcpy "$APP/MacOS/scrcpy"
+          cp "$UPSTREAM_ARTIFACT"/scrcpy-server "$APP/MacOS/scrcpy-server"
+          cp "$UPSTREAM_ARTIFACT"/adb "$APP/MacOS/adb"
+          cp desktop/launcher/refletunes "$APP/MacOS/refletunes"
+          chmod +x "$APP/MacOS/refletunes" "$APP/MacOS/scrcpy" "$APP/MacOS/adb"
+          cp "$UPSTREAM_ARTIFACT/LICENSE" "$APP/Resources/LICENSE-scrcpy.txt"
+          cp legal/THIRD_PARTY_NOTICES.md "$APP/Resources/"
+          cp desktop/launcher/scrcpy.png "$APP/Resources/" 2>/dev/null || true
+          cat > "$APP/Info.plist" <<'PLIST'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+            "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>CFBundleName</key><string>Refletunes</string>
+            <key>CFBundleDisplayName</key><string>Refletunes</string>
+            <key>CFBundleIdentifier</key><string>app.refletunes</string>
+            <key>CFBundleVersion</key><string>0.1.0</string>
+            <key>CFBundleShortVersionString</key><string>0.1.0</string>
+            <key>CFBundleExecutable</key><string>refletunes</string>
+            <key>CFBundlePackageType</key><string>APPL</string>
+            <key>LSMinimumSystemVersion</key><string>10.15</string>
+            <key>NSHighResolutionCapable</key><true/>
+          </dict>
+          </plist>
+          PLIST
+          # Assinatura ad-hoc: evita rejeição do Gatekeeper sem certificado
+          codesign --force --deep -s - "dist/refletunes-macos/Refletunes.app" || true
+          cat > dist/refletunes-macos/ABRA-ME.txt <<'TXT'
+          Como abrir no macOS (beta, app não notarizado):
+
+          1. Clique com o botão direito (ou Ctrl+clique) em Refletunes.app.
+          2. Escolha "Abrir" e confirme.
+          3. O cliente de espelhamento e o adb rodam via Rosetta 2 em
+             Macs Apple Silicon (instale pelo assistente do macOS se pedido).
+          TXT
+
+      - name: ZIP + SHA-256
+        run: |
+          cd dist
+          zip -r refletunes-macos.zip refletunes-macos
+          shasum -a 256 refletunes-macos.zip | tee refletunes-macos.zip.sha256
+
+      - name: Upload artefato
+        uses: actions/upload-artifact@v7
+        with:
+          name: refletunes-macos
+          path: |
+            dist/refletunes-macos.zip
+            dist/refletunes-macos.zip.sha256
