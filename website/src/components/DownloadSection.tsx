@@ -96,9 +96,17 @@ export default function DownloadSection() {
                   Baixar para {current.name}
                 </button>
               </GlassSurface>
-              {canDownload && (
+              {canDownload && current.id === "windows" && (
                 <p className="download__note">
                   Versão beta 0.1.0 · arquivo .zip portátil — extraia e execute o Refletunes.
+                </p>
+              )}
+              {canDownload && current.id === "macos" && (
+                <p className="download__note">
+                  Versão beta 0.1.0 · requer macOS 11 ou mais recente. Como o app ainda não tem
+                  notarização Apple, o macOS pode avisar que “não é seguro”: clique com o botão
+                  direito em Refletunes.app e escolha “Abrir”. Se bloquear, vá em Ajustes do
+                  Sistema → Privacidade e Segurança → “Abrir assim mesmo”.
                 </p>
               )}
               {!canDownload && <p className="download__note">Esta versão ainda não está disponível.</p>}

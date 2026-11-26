@@ -11,6 +11,7 @@ permissions:
 env:
   UPSTREAM_VERSION: v5.0.1
   UPSTREAM_ARTIFACT: scrcpy-macos-x86_64-v5.0.1
+  MACOSX_DEPLOYMENT_TARGET: '11.0'
 
 jobs:
   build:
@@ -47,8 +48,8 @@ jobs:
           GOOS: darwin
           GOARCH: amd64
           CGO_ENABLED: 1
-          CGO_CFLAGS: -arch x86_64
-          CGO_LDFLAGS: -arch x86_64
+          CGO_CFLAGS: -arch x86_64 -mmacosx-version-min=11.0
+          CGO_LDFLAGS: -arch x86_64 -mmacosx-version-min=11.0
         run: go build -ldflags "-s -w" -o refletunes-amd64 .
 
       - name: Binário universal (lipo)
@@ -82,7 +83,7 @@ jobs:
             <key>CFBundleShortVersionString</key><string>0.1.0</string>
             <key>CFBundleExecutable</key><string>refletunes</string>
             <key>CFBundlePackageType</key><string>APPL</string>
-            <key>LSMinimumSystemVersion</key><string>10.15</string>
+            <key>LSMinimumSystemVersion</key><string>11.0</string>
             <key>NSHighResolutionCapable</key><true/>
           </dict>
           </plist>
@@ -90,12 +91,28 @@ jobs:
           # Assinatura ad-hoc: evita rejeição do Gatekeeper sem certificado
           codesign --force --deep -s - "dist/refletunes-macos/Refletunes.app" || true
           cat > dist/refletunes-macos/ABRA-ME.txt <<'TXT'
-          Como abrir no macOS (beta, app não notarizado):
+          Refletunes para macOS — beta
 
-          1. Clique com o botão direito (ou Ctrl+clique) em Refletunes.app.
-          2. Escolha "Abrir" e confirme.
-          3. O cliente de espelhamento e o adb rodam via Rosetta 2 em
-             Macs Apple Silicon (instale pelo assistente do macOS se pedido).
+          REQUISITOS
+          - macOS 11 (Big Sur) ou mais recente.
+          - Em Macs Apple Silicon (M1/M2/M3/M4): Rosetta 2 — o macOS
+            oferece a instalação na primeira abertura.
+
+          "NÃO É SEGURO" / "DESENVOLVEDOR NÃO IDENTIFICADO"
+          O app ainda não tem notarização Apple (beta). Para abrir:
+
+          Opção A — clique com o botão direito (ou Ctrl+clique) em
+          Refletunes.app → "Abrir" → confirme "Abrir" de novo.
+
+          Opção B — se o macOS bloquear mesmo assim: Ajustes do Sistema →
+          Privacidade e Segurança → role até "Segurança" → clique em
+          "Abrir assim mesmo" ao lado do Refletunes.
+
+          Opção C — pelo Terminal (dentro da pasta onde o app está):
+            xattr -cr Refletunes.app
+          Depois abra normalmente.
+
+          Não desative o Gatekeeper globalmente — não é necessário.
           TXT
 
       - name: ZIP + SHA-256

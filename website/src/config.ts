@@ -19,7 +19,7 @@ export const PLATFORMS: Record<
   macos: {
     id: "macos",
     name: "macOS",
-    description: "Para iMac e MacBook.",
+    description: "Para iMac e MacBook com macOS 11 ou mais recente.",
     url: DOWNLOAD_MACOS_URL,
   },
   windows: {
