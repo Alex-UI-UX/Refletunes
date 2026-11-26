@@ -3,7 +3,8 @@
  * Preencha as URLs abaixo quando os instaladores estiverem publicados.
  * Enquanto estiverem vazias, a plataforma aparece como indisponível.
  */
-export const DOWNLOAD_MACOS_URL = "";
+export const DOWNLOAD_MACOS_URL =
+  "https://github.com/Alex-UI-UX/Refletunes/releases/download/v0.1.0-beta/refletunes-macos.zip";
 export const DOWNLOAD_WINDOWS_URL =
   "https://github.com/Alex-UI-UX/Refletunes/releases/download/v0.1.0-beta/refletunes-win64.zip";
 

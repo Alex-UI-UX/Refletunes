@@ -6,7 +6,7 @@ on:
     tags: ['v*']
 
 permissions:
-  contents: read
+  contents: write
 
 env:
   UPSTREAM_VERSION: v5.0.1
@@ -126,5 +126,13 @@ jobs:
         with:
           name: refletunes-macos
           path: |
+            dist/refletunes-macos.zip
+            dist/refletunes-macos.zip.sha256
+
+      - name: Publicar ZIP na release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || 'v0.1.0-beta' }}
+          files: |
             dist/refletunes-macos.zip
             dist/refletunes-macos.zip.sha256
